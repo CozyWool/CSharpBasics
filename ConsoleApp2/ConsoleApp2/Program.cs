@@ -1,6 +1,4 @@
-﻿void Do(int x = 0)
-{
-    Console.WriteLine(x);
-}
-var choice = 1;
-Do(choice);
+﻿Console.WriteLine(
+                  @"
+\section{Section 1}
+Some {\i LaTeX} text here.");
