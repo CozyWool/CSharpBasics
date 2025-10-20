@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Avalonia;
+using OxyPlot;
 
 namespace Names.UI;
 
@@ -27,9 +28,13 @@ public static class Program
 		var namesData = ReadData();
 		Charts.ShowHeatmap(HeatmapTask.GetBirthsPerDateHeatmap(namesData), "Тепловая карта рождаемости в течение года");
 		Charts.ShowHistogram(HistogramTask.GetBirthsPerDayHistogram(namesData, "юрий"),
-			"Рождаемость людей с именем Юрий");
+			"Рождаемость людей с именем Юрий", OxyColors.Blue);
 		Charts.ShowHistogram(HistogramTask.GetBirthsPerDayHistogram(namesData, "владимир"),
-			"Рождаемость людей с именем Владимир");
+			"Рождаемость людей с именем Владимир", OxyColors.Blue);
+		Charts.ShowHistogram(HistogramTask.GetHistogramBirthsByYearAndGender(namesData, Gender.Male),
+			"Рождаемость мужчин по годам", OxyColors.Blue);
+		Charts.ShowHistogram(HistogramTask.GetHistogramBirthsByYearAndGender(namesData, Gender.Female),
+			"Рождаемость женщин по годам", OxyColors.DeepPink);
 		Charts.ShowHistogram(HistogramSample.GetHistogramBirthsByYear(namesData),
 			"Рождаемость людей");
 		//CreativityTask.ShowYourStatistics(namesData);
