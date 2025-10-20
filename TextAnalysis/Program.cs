@@ -11,8 +11,8 @@ public static class Program
         // Все непрошедшие тесты 
         var testsToRun = new[]
         {
-            "TextAnalysis.SentencesParser_Tests",
-            // "TextAnalysis.FrequencyAnalysis_Tests",
+            // "TextAnalysis.SentencesParser_Tests",
+            "TextAnalysis.FrequencyAnalysis_Tests",
             // "TextAnalysis.TextGenerator_Tests",
         };
         new AutoRun().Execute(new[]
@@ -25,6 +25,7 @@ public static class Program
         var text = File.ReadAllText("HarryPotterText.txt");
         var sentences = SentencesParserTask.ParseSentences(text);
         var frequency = FrequencyAnalysisTask.GetMostFrequentNextWords(sentences);
+        
         //Расскомментируйте этот блок, если хотите выполнить последнюю задачу до первых двух.
         /*
         frequency = new Dictionary<string, string>
