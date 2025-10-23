@@ -7,39 +7,26 @@ static class TextGeneratorTask
         string phraseBeginning,
         int wordsCount)
     {
-        var phraseWords = phraseBeginning.Split(' ');
-        if (phraseWords.Length < 1)
-        {
-            return phraseBeginning;
-        }
+        var phraseWords = phraseBeginning.Split(' ').ToList();
 
-        var phrases = new List<string>();
-        if (phraseBeginning.Length >= 1)
+        for (var i = 0; i < wordsCount; ++i)
         {
-            phrases.Add(phraseWords[0]);
-        }
-
-        if (phraseBeginning.Length >= 2)
-        {
-            phrases.AddRange(phraseWords[1..]);
-        }
-
-        while (phrases.Count - phraseWords.Length < wordsCount)
-        {
-            if (phrases.Count >= 2 && nextWords.ContainsKey(string.Join(' ', phrases[^2..])))
+            if (phraseWords.Count >= 2 &&
+                nextWords.TryGetValue(string.Join(' ', phraseWords[^2..]), out var wordAfterTwo))
             {
-                phrases.Add(nextWords[string.Join(' ', phrases[^2..])]);
+                phraseWords.Add(wordAfterTwo);
             }
-            else if (nextWords.ContainsKey(phrases[^1]))
+            else if (phraseWords.Count >= 1 &&
+                     nextWords.TryGetValue(phraseWords[^1], out var wordAfterOne))
             {
-                phrases.Add(nextWords[phrases[^1]]);
+                phraseWords.Add(wordAfterOne);
             }
             else
             {
-                return string.Join(' ', phrases);
+                break;
             }
         }
 
-        return string.Join(' ', phrases);
+        return string.Join(' ', phraseWords);
     }
 }
