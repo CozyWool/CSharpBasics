@@ -4,11 +4,22 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\CozyWool\.nuget\packages\nunit\4.2.2\lib\net6.0\nunit.framework.legacy.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2dafdfe3_002D5246_002D4d27_002D8725_002Dd703c54246c0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="QuotedFieldTaskTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2371fa1e_002D7a51_002D4bb7_002Da644_002D042f2de05ba6/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	
+	
+	
+	
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=9415fa6c_002D4cd1_002D4739_002Da9c7_002Dfe72e91237ba/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="FieldParserTaskTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::61B3142A-F585-E215-017F-FEB68993A508::net8.0::TableParser.QuotedFieldTaskTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::61B3142A-F585-E215-017F-FEB68993A508::net9.0::TableParser.FieldParserTaskTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	
+	
 	
 	
 	</wpf:ResourceDictionary>
