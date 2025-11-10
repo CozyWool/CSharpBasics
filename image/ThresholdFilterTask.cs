@@ -8,30 +8,32 @@ public static class ThresholdFilterTask
     {
         var row = original.GetLength(0);
         var col = original.GetLength(1);
-        var thresholdFiltered = new double[row, col];
-        var whitePixels = (int) (whitePixelsFraction * thresholdFiltered.Length);
+        var filteredByThreshold = new double[row, col];
+        var whitePixels = (int) (whitePixelsFraction * filteredByThreshold.Length);
 
         if (whitePixels == 0)
         {
-            return thresholdFiltered;
+            return filteredByThreshold;
         }
 
-        var t = original.Cast<double>()
-                        .OrderBy(x => -x)
-                        .Take(whitePixels)
-                        .LastOrDefault();
-
+        var threshold = CalculateThreshold(original, whitePixels);
         for (var i = 0; i < row; i++)
         {
             for (var j = 0; j < col; j++)
             {
-                if (original[i, j] >= t)
+                if (original[i, j] >= threshold)
                 {
-                    thresholdFiltered[i, j] = 1.0;
+                    filteredByThreshold[i, j] = 1.0;
                 }
             }
         }
 
-        return thresholdFiltered;
+        return filteredByThreshold;
     }
+
+    private static double CalculateThreshold(this double[,] original, int whitePixels) =>
+        original.Cast<double>()
+                .OrderBy(x => -x)
+                .Take(whitePixels)
+                .LastOrDefault();
 }
