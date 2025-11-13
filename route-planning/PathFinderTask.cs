@@ -5,43 +5,32 @@ namespace RoutePlanning;
 
 public static class PathFinderTask
 {
-    private static double minDistance = double.MaxValue;
-    private static int[] best;
+    private static double _minDistance = double.MaxValue;
+    private static int[] _bestOrder;
 
     public static int[] FindBestCheckpointsOrder(Point[] checkpoints)
     {
-        minDistance = double.MaxValue;
-        var bestOrder = MakeTrivialPermutation(checkpoints);
-        return bestOrder;
+        _minDistance = double.MaxValue;
+        _bestOrder = new int[checkpoints.Length];
+        var startOrder = new int[checkpoints.Length];
+        for (var i = 0; i < startOrder.Length; i++)
+        {
+            startOrder[i] = i;
+        }
+
+        MakePermutations(checkpoints, startOrder, 1);
+        return _bestOrder;
     }
 
-    private static int[] MakeTrivialPermutation(Point[] checkpoints)
-    {
-        var bestOrder = new int[checkpoints.Length];
-        for (var i = 0; i < bestOrder.Length; i++)
-            bestOrder[i] = i;
-        MakePermutations(checkpoints, bestOrder);
-        return best;
-    }
-
-    static void MakePermutations(Point[] checkpoints, int[] permutation, int position = 0, double distance = 0)
+    private static void MakePermutations(Point[] checkpoints, int[] permutation, int position = 0, double distance = 0)
     {
         if (position == permutation.Length)
         {
-            var currentDistance = checkpoints.GetPathLength(permutation);
-            if (currentDistance < minDistance)
-            {
-                minDistance = currentDistance;
-                best = new int[permutation.Length];
-                for (var i = 0; i < permutation.Length; i++)
-                {
-                    best[i] = permutation[i];
-                }
-            }
+            UpdateBestOrder(permutation, distance);
             return;
         }
 
-        for (var i = 0; i < permutation.Length; i++)
+        for (var i = 1; i < permutation.Length; i++)
         {
             var index = Array.IndexOf(permutation, i, 0, position);
             if (index != -1)
@@ -50,18 +39,30 @@ public static class PathFinderTask
             }
 
             permutation[position] = i;
-            if (position > 0)
-            {
-                var previous = checkpoints[permutation[position - 1]];
-                var current = checkpoints[permutation[position]];
-                distance += previous.DistanceTo(current);
-            }
-
-            if (distance >= minDistance)
+            var newDistance = distance + CalculateNextDistance(checkpoints, permutation, position);
+            if (newDistance >= _minDistance)
             {
                 break;
             }
-            MakePermutations(checkpoints, permutation, position + 1);
+
+            MakePermutations(checkpoints, permutation, position + 1, newDistance);
         }
+    }
+
+    private static void UpdateBestOrder(int[] permutation, double distance)
+    {
+        _minDistance = distance;
+        for (var i = 0; i < permutation.Length; i++)
+        {
+            _bestOrder[i] = permutation[i];
+        }
+    }
+
+    private static double CalculateNextDistance(Point[] checkpoints, int[] permutation, int position)
+    {
+        var previous = checkpoints[permutation[position - 1]];
+        var current = checkpoints[permutation[position]];
+        var nextDistance = previous.DistanceTo(current);
+        return nextDistance;
     }
 }
