@@ -17,18 +17,16 @@ public class CaseAlternatorTask
         {
             return;
         }
+        AlternateCharCases(word, startIndex + 1, result);
 
         var current = word[startIndex];
-        if (char.IsLetter(current) && current != 223 && (current < 1425 || current > 1524))
+        if (!char.IsLetter(current) || char.ToUpper(current) == char.ToLower(current))
         {
-            AlternateCharCases(word, startIndex + 1, result);
-            word[startIndex] = char.ToUpper(current);
-            AlternateCharCases(word, startIndex + 1, result);
-            word[startIndex] = current;
+            return;
         }
-        else
-        {
-            AlternateCharCases(word, startIndex + 1, result);
-        }
+
+        word[startIndex] = char.ToUpper(current);
+        AlternateCharCases(word, startIndex + 1, result);
+        word[startIndex] = current;
     }
 }
