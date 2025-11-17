@@ -6,17 +6,17 @@ public class CaseAlternatorTask
     {
         var result = new List<string>();
         AlternateCharCases(lowercaseWord.ToCharArray(), 0, result);
-        return result.Distinct().ToList();
+        return result;
     }
 
     static void AlternateCharCases(char[] word, int startIndex, List<string> result)
     {
-        result.Add(new string(word));
-
         if (startIndex == word.Length)
         {
+            result.Add(new string(word));
             return;
         }
+
         AlternateCharCases(word, startIndex + 1, result);
 
         var current = word[startIndex];
