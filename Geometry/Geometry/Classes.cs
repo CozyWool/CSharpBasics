@@ -4,12 +4,37 @@ public class Vector
 {
     public double X;
     public double Y;
+
+    public double GetLength()
+    {
+        return Geometry.GetLength(this);
+    }
+
+    public Vector Add(Vector vector)
+    {
+        return Geometry.Add(this, vector);
+    }
+
+    public bool Belongs(Segment segment)
+    {
+        return Geometry.IsVectorInSegment(this, segment);
+    }
 }
 
 public class Segment
 {
     public Vector Begin;
     public Vector End;
+
+    public double GetLength()
+    {
+        return Geometry.GetLength(this);
+    }
+
+    public bool Contains(Vector vector)
+    {
+        return Geometry.IsVectorInSegment(vector, this);
+    }
 }
 
 public class Geometry
@@ -29,15 +54,15 @@ public class Geometry
     public static bool IsVectorInSegment(Vector vector, Segment segment)
     {
         var leftSegment = new Segment
-                       {
-                           Begin = segment.Begin,
-                           End = vector
-                       };
+                          {
+                              Begin = segment.Begin,
+                              End = vector
+                          };
         var rightSegment = new Segment
-                       {
-                           Begin = vector,
-                           End = segment.End
-                       };
+                           {
+                               Begin = vector,
+                               End = segment.End
+                           };
         return Math.Abs(GetLength(segment) - (GetLength(rightSegment) + GetLength(leftSegment))) < 1e-6;
     }
 
