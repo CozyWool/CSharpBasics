@@ -20,31 +20,13 @@ public static class ManipulatorTask
         var wristY = y + Palm * Math.Sin(Math.PI - alpha);
 
         var shoulderToWrist = Math.Sqrt(wristX * wristX + wristY * wristY);
-        if (shoulderToWrist > UpperArm + Forearm || shoulderToWrist < Math.Abs(UpperArm - Forearm))
-        {
-            return [double.NaN, double.NaN, double.NaN];
-        }
 
         var angleToWrist = Math.Atan2(wristY, wristX);
 
         var elbowAngle = TriangleTask.GetABAngle(UpperArm, Forearm, shoulderToWrist);
 
-        if (double.IsNaN(elbowAngle))
-        {
-            return [double.NaN, double.NaN, double.NaN];
-        }
-
-        var shoulderAngle = angleToWrist
-                            + TriangleTask.GetABAngle(shoulderToWrist, UpperArm, Forearm);
-
-
-        if (double.IsNaN(shoulderAngle))
-        {
-            return [double.NaN, double.NaN, double.NaN];
-        }
-
+        var shoulderAngle = angleToWrist + TriangleTask.GetABAngle(shoulderToWrist, UpperArm, Forearm);
         var wristAngle = -alpha - shoulderAngle - elbowAngle;
-
         return [shoulderAngle, elbowAngle, wristAngle];
     }
 }
@@ -84,8 +66,10 @@ public class ManipulatorTask_Tests
             }
         }
 
-        ClassicAssert.Greater(successCount, totalTests * 0.8,
-                              $"At least 80% of reachable points should be solved. Success: {successCount}/{totalTests}");
+        ClassicAssert.Greater(successCount,
+                              totalTests * 0.8,
+                              $"At least 80% of reachable points should be solved." +
+                              $" Success: {successCount}/{totalTests}");
     }
 
     [Test]

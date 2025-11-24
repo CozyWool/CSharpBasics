@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
@@ -15,14 +16,19 @@ public static class VisualizerTask
     public static double Elbow = 3 * Math.PI / 4;
     public static double Shoulder = Math.PI / 2;
 
+    public static double Radius = 5.0;
     public static Brush UnreachableAreaBrush = new SolidColorBrush(Color.FromArgb(255, 255, 230, 230));
     public static Brush ReachableAreaBrush = new SolidColorBrush(Color.FromArgb(255, 230, 255, 230));
     public static Pen ManipulatorPen = new Pen(Brushes.Black, 3);
     public static Brush JointBrush = new SolidColorBrush(Colors.Gray);
 
-    public static void KeyDown(Visual visual, KeyEventArgs key)
+
+    public static double MaxStep = Math.PI / 4;
+    public static double CurrentStep;
+
+    public static bool KeyDown(Visual visual, KeyEventArgs key)
     {
-        var step = Math.PI / 24;
+        var step = Math.PI / 360;
         switch (key.Key)
         {
             case Key.Q:
@@ -41,8 +47,9 @@ public static class VisualizerTask
 
         Wrist = -Alpha - Shoulder - Elbow;
         visual.InvalidateVisual();
+        CurrentStep += step;
+        return CurrentStep >= MaxStep;
     }
-
     public static void MouseMove(Visual visual, PointerEventArgs e)
     {
         var windowPoint = e.GetPosition(visual);
@@ -64,7 +71,7 @@ public static class VisualizerTask
     public static void UpdateManipulator()
     {
         var values = ManipulatorTask.MoveManipulatorTo(X, Y, Alpha);
-        if (double.IsNaN(values[0]) && double.IsNaN(values[1]) && double.IsNaN(values[2]))
+        if (values.Any(double.IsNaN))
         {
             return;
         }
@@ -78,12 +85,27 @@ public static class VisualizerTask
     {
         var joints = AnglesToCoordinatesTask.GetJointPositions(Shoulder, Elbow, Wrist);
 
+        DrawReachableZone(context, ReachableAreaBrush, UnreachableAreaBrush, shoulderPos, joints);
+        for (var i = 0; i < joints.Length; i++)
+        {
+            joints[i] = ConvertMathToWindow(joints[i], shoulderPos);
+        }
 
-        DrawReachableZone(context, ReachableAreaBrush, UnreachableAreaBrush, shoulderPos);
-        joints[0] = ConvertMathToWindow(joints[0], shoulderPos);
-        joints[1] = ConvertMathToWindow(joints[1], shoulderPos);
-        joints[2] = ConvertMathToWindow(joints[2], shoulderPos);
+        DrawText(context);
 
+        context.DrawLine(ManipulatorPen, shoulderPos, joints[0]);
+        context.DrawEllipse(JointBrush, null, shoulderPos, Radius, Radius);
+        for (var i = 0; i < 2; i++)
+        {
+            context.DrawLine(ManipulatorPen, joints[i], joints[i + 1]);
+            context.DrawEllipse(JointBrush, null, joints[i], Radius, Radius);
+        }
+
+        context.DrawEllipse(JointBrush, null, joints[^1], Radius / 2, Radius / 2);
+    }
+
+    private static void DrawText(DrawingContext context)
+    {
         var formattedText = new FormattedText(
                                               $"X={X:0}, Y={Y:0}, Alpha={Alpha:0.00}",
                                               CultureInfo.InvariantCulture,
@@ -96,36 +118,26 @@ public static class VisualizerTask
                                 TextAlignment = TextAlignment.Center
                             };
         context.DrawText(formattedText, new Point(10, 10));
-
-
-        var radius = 5.0;
-        context.DrawLine(ManipulatorPen, shoulderPos, joints[0]);
-        context.DrawEllipse(JointBrush, null, shoulderPos, radius, radius);
-        for (var i = 0; i < 2; i++)
-        {
-            context.DrawLine(ManipulatorPen, joints[i], joints[i + 1]);
-            context.DrawEllipse(JointBrush, null, joints[i], radius, radius);
-        }
-
-        context.DrawEllipse(JointBrush, null, joints[2], radius / 2, radius / 2);
     }
 
     private static void DrawReachableZone(
         DrawingContext context,
         Brush reachableBrush,
         Brush unreachableBrush,
-        Point shoulderPos)
+        Point shoulderPos,
+        Point[] joints)
     {
         var rMin = Math.Abs(Manipulator.UpperArm - Manipulator.Forearm);
         var rMax = Manipulator.UpperArm + Manipulator.Forearm;
-
+        var mathCenter = new Point(joints[2].X - joints[1].X, joints[2].Y - joints[1].Y);
+        var windowCenter = ConvertMathToWindow(mathCenter, shoulderPos);
         context.DrawEllipse(reachableBrush,
                             null,
-                            shoulderPos,
+                            windowCenter,
                             rMax, rMax);
         context.DrawEllipse(unreachableBrush,
                             null,
-                            shoulderPos,
+                            windowCenter,
                             rMin, rMin);
     }
 

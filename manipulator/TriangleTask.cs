@@ -16,10 +16,6 @@ public class TriangleTask
             return double.NaN;
         }
         var cosA = (a * a + b * b - c * c) / (2 * a * b);
-        if (cosA is < -1.0 or > 1.0)
-        {
-            return double.NaN;
-        }
         return Math.Acos(cosA);
     }
 }
