@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
+        <TrimMode>copyused</TrimMode>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <RootNamespace>GeometryPainting</RootNamespace>
+        <StartupObject>GeometryPainting.UI.Program</StartupObject>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Remove=".gitignore" />
+        <Compile Remove="*.Initial.*" />
+        <None Include="*.Initial.*" />
+        <Compile Update="UI\MainWindow.axaml.cs">
+          <DependentUpon>MainWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="UI\App.axaml.cs">
+          <DependentUpon>App.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Avalonia" Version="11.3.6" />
+      <PackageReference Include="Avalonia.Desktop" Version="11.3.6" />
+      <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.6" />
+      <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.6" />
+      <PackageReference Include="System.Drawing.Common" Version="9.0.9" />
+    </ItemGroup>
+    <ItemGroup>
+      <Reference Include="Geometry">
+        <HintPath>..\Geometry\Geometry\bin\Debug\net9.0\Geometry.dll</HintPath>
+      </Reference>
+      <Reference Include="GeometryTask">
+        <HintPath>..\Geometry\GeometryTask\bin\Debug\net9.0\GeometryTask.dll</HintPath>
+      </Reference>
+      <Reference Include="GeometryTasks">
+        <HintPath>..\Geometry\GeometryTasks\bin\Debug\net9.0\GeometryTasks.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+</Project>
