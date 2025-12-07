@@ -171,22 +171,16 @@ public class Monster : ICreature
         {
             return creatureCommand;
         }
+        var deltaX = Math.Sign(playerX - x);
+        var deltaY = Math.Sign(playerY - y);
 
-        if (y < playerY && CanMove(x, y + 1))
+        if (deltaY != 0 && CanMove(x, y + deltaY))
         {
-            creatureCommand.DeltaY = 1;
+            creatureCommand.DeltaY = deltaY;
         }
-        else if (y > playerY && CanMove(x, y - 1))
+        else if (deltaX != 0 && CanMove(x + deltaX, y))
         {
-            creatureCommand.DeltaY = -1;
-        }
-        else if (x < playerX && CanMove(x + 1, y))
-        {
-            creatureCommand.DeltaX = 1;
-        }
-        else if (x > playerX && CanMove(x - 1, y))
-        {
-            creatureCommand.DeltaX = -1;
+            creatureCommand.DeltaX = deltaX;
         }
 
         return creatureCommand;
@@ -194,11 +188,6 @@ public class Monster : ICreature
 
     private static bool CanMove(int x, int y)
     {
-        if ((x < 0 || x >= Game.MapWidth) || (y < 0 || y >= Game.MapHeight))
-        {
-            return false;
-        }
-
         return Game.Map[x, y] is not Sack and not Monster and not Terrain;
     }
 
