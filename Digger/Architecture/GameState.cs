@@ -56,11 +56,13 @@ public class GameState
         var candidates = creatures[x, y];
         var aliveCandidates = candidates.ToList();
         foreach (var candidate in candidates)
-        foreach (var rival in candidates)
-            if (rival != candidate && candidate.DeadInConflict(rival))
-            {
-                aliveCandidates.Remove(candidate);
-            }
+        {
+            foreach (var rival in candidates)
+                if (rival != candidate && candidate.DeadInConflict(rival))
+                {
+                    aliveCandidates.Remove(candidate);
+                }
+        }
 
         if (aliveCandidates.Count > 1)
         {

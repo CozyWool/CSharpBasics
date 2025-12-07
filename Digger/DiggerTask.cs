@@ -37,7 +37,7 @@ public class Player : ICreature
 
     public int GetDrawingPriority()
     {
-        return 10;
+        return -100;
     }
 
     public CreatureCommand Act(int x, int y)
@@ -89,7 +89,7 @@ public class Sack : ICreature
 
     public int GetDrawingPriority()
     {
-        return 9;
+        return -9;
     }
 
     public CreatureCommand Act(int x, int y)
@@ -131,7 +131,7 @@ public class Gold : ICreature
 
     public int GetDrawingPriority()
     {
-        return 8;
+        return -8;
     }
 
     public CreatureCommand Act(int x, int y)
@@ -160,7 +160,7 @@ public class Monster : ICreature
 
     public int GetDrawingPriority()
     {
-        return 10;
+        return -10;
     }
 
     public CreatureCommand Act(int x, int y)
