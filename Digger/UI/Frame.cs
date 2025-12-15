@@ -16,6 +16,7 @@ public class Frame : UserControl
     private readonly Dictionary<string, Bitmap> bitmaps = new();
     private readonly GameState gameState;
     private int tickCount;
+    private object? lockObj;
 
     public Frame()
     {
@@ -33,48 +34,56 @@ public class Frame : UserControl
     {
         var shift = new Vector(0, GameState.ElementSize);
         e.FillRectangle(
-            Brushes.Black, new Rect(0, GameState.ElementSize, GameState.ElementSize * Game.MapWidth,
-                GameState.ElementSize * Game.MapHeight));
-        foreach (var a in gameState.Animations)
+                        Brushes.Black, new Rect(0, GameState.ElementSize, GameState.ElementSize * Game.MapWidth,
+                                                GameState.ElementSize * Game.MapHeight));
+        for (var i = 0; i < gameState.Animations.Count; i++)
+        {
+            var a = gameState.Animations[i];
             e.DrawImage(bitmaps[a.Creature.GetImageFileName()], new Rect(a.Location + shift,
-                new Size(GameState.ElementSize, GameState.ElementSize)));
+                                                                         new Size(GameState.ElementSize,
+                                                                              GameState.ElementSize)));
+        }
+
         var text = Game.Scores.ToString();
 
         var textLayout = new TextLayout(
-	        text,
-	        typeface: Typeface.Default,
-	        fontSize: 20,
-	        foreground: Brushes.Green,
-	        textAlignment: TextAlignment.Center,
-	        textWrapping: TextWrapping.Wrap,
-	        maxWidth: double.PositiveInfinity
-        );
+                                        text,
+                                        typeface: Typeface.Default,
+                                        fontSize: 20,
+                                        foreground: Brushes.Green,
+                                        textAlignment: TextAlignment.Center,
+                                        textWrapping: TextWrapping.Wrap,
+                                        maxWidth: double.PositiveInfinity
+                                       );
 
         textLayout.Draw(e, new Point(0, 0));
     }
 
     private void TimerTick(object sender, ElapsedEventArgs args)
     {
-	    if (tickCount == 0)
-	    {
-		    gameState.BeginAct();
-	    }
+        if (tickCount == 0)
+        {
+            gameState.BeginAct();
+        }
 
-	    foreach (var anim in gameState.Animations)
-		    anim.Location = new Point(anim.Location.X + 4 * anim.Command.DeltaX, 
-			    anim.Location.Y + 4 * anim.Command.DeltaY);
+        for (var i = 0; i < gameState.Animations.Count; i++)
+        {
+            var anim = gameState.Animations[i];
+            anim.Location = new Point(anim.Location.X + 4 * anim.Command.DeltaX,
+                                      anim.Location.Y + 4 * anim.Command.DeltaY);
+        }
 
-	    if (tickCount == 7)
-	    {
-		    gameState.EndAct();
-	    }
+        if (tickCount == 7)
+        {
+            gameState.EndAct();
+        }
 
-	    tickCount++;
-	    if (tickCount == 8)
-	    {
-		    tickCount = 0;
-	    }
+        tickCount++;
+        if (tickCount == 8)
+        {
+            tickCount = 0;
+        }
 
-	    Dispatcher.UIThread.Post(InvalidateVisual);
+        Dispatcher.UIThread.Post(InvalidateVisual);
     }
 }

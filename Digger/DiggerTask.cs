@@ -74,7 +74,7 @@ public class Player : ICreature
 
     public bool DeadInConflict(ICreature conflictedObject)
     {
-        return conflictedObject is Sack or Monster;
+        return conflictedObject is Sack or Monster or MonsterRandom;
     }
 }
 
@@ -147,23 +147,45 @@ public class Gold : ICreature
             return true;
         }
 
-        return conflictedObject is Monster;
+        return conflictedObject is Monster or MonsterRandom;
     }
 }
 
-public class Monster : ICreature
+public abstract class MonsterBase : ICreature
 {
-    public string GetImageFileName()
-    {
-        return "Monster.png";
-    }
+    public abstract string GetImageFileName();
 
     public int GetDrawingPriority()
     {
         return -10;
     }
 
-    public CreatureCommand Act(int x, int y)
+    public abstract CreatureCommand Act(int x, int y);
+
+    protected static bool CanMove(int x, int y)
+    {
+        if ((x < 0 || x >= Game.MapWidth) || (y < 0 || y >= Game.MapHeight))
+        {
+            return false;
+        }
+
+        return Game.Map[x, y] is not Sack and not Monster and not Terrain and not MonsterRandom;
+    }
+
+    public bool DeadInConflict(ICreature conflictedObject)
+    {
+        return conflictedObject is Sack or Monster or MonsterRandom;
+    }
+}
+
+public class Monster : MonsterBase
+{
+    public override string GetImageFileName()
+    {
+        return "Monster.png";
+    }
+
+    public override CreatureCommand Act(int x, int y)
     {
         var creatureCommand = new CreatureCommand();
         var (playerX, playerY) = FindPlayer();
@@ -171,6 +193,7 @@ public class Monster : ICreature
         {
             return creatureCommand;
         }
+
         var deltaX = Math.Sign(playerX - x);
         var deltaY = Math.Sign(playerY - y);
 
@@ -184,11 +207,6 @@ public class Monster : ICreature
         }
 
         return creatureCommand;
-    }
-
-    private static bool CanMove(int x, int y)
-    {
-        return Game.Map[x, y] is not Sack and not Monster and not Terrain;
     }
 
     private static (int, int) FindPlayer()
@@ -206,9 +224,61 @@ public class Monster : ICreature
 
         return (-1, -1);
     }
+}
 
-    public bool DeadInConflict(ICreature conflictedObject)
+public class MonsterRandom : MonsterBase
+{
+    private enum Direction
     {
-        return conflictedObject is Sack or Monster;
+        Left,
+        Right,
+        Up,
+        Down
+    }
+
+    private readonly Random _random = new();
+    private Direction? _currentDirection;
+
+    public override string GetImageFileName()
+    {
+        return "MonsterRandom.png";
+    }
+
+    public override CreatureCommand Act(int x, int y)
+    {
+        var creatureCommand = new CreatureCommand();
+        var deltaX = 0;
+        var deltaY = 0;
+        _currentDirection ??= (Direction) _random.Next(4);
+        switch (_currentDirection)
+        {
+            case Direction.Left:
+                deltaX++;
+                break;
+            case Direction.Right:
+                deltaX--;
+                break;
+            case Direction.Up:
+                deltaY--;
+                break;
+            case Direction.Down:
+                deltaY++;
+                break;
+        }
+
+        if (deltaY != 0 && CanMove(x, y + deltaY))
+        {
+            creatureCommand.DeltaY = deltaY;
+        }
+        else if (deltaX != 0 && CanMove(x + deltaX, y))
+        {
+            creatureCommand.DeltaX = deltaX;
+        }
+        else
+        {
+            _currentDirection = (Direction) _random.Next(4);
+        }
+
+        return creatureCommand;
     }
 }

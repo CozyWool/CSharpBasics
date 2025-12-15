@@ -14,30 +14,32 @@ public class GameState
     {
         Animations.Clear();
         for (var x = 0; x < Game.MapWidth; x++)
-        for (var y = 0; y < Game.MapHeight; y++)
         {
-            var creature = Game.Map[x, y];
-            if (creature == null)
+            for (var y = 0; y < Game.MapHeight; y++)
             {
-                continue;
+                var creature = Game.Map[x, y];
+                if (creature is null)
+                {
+                    continue;
+                }
+
+                var command = creature.Act(x, y);
+
+                if ((x + command.DeltaX < 0 || x + command.DeltaX >= Game.MapWidth)
+                    || (y + command.DeltaY < 0 || y + command.DeltaY >= Game.MapHeight))
+                {
+                    throw new Exception($"The object {creature.GetType()} falls out of the game field");
+                }
+
+                Animations.Add(
+                               new CreatureAnimation
+                               {
+                                   Command = command,
+                                   Creature = creature,
+                                   Location = new Point(x * ElementSize, y * ElementSize),
+                                   TargetLogicalLocation = new Point(x + command.DeltaX, y + command.DeltaY)
+                               });
             }
-
-            var command = creature.Act(x, y);
-
-            if ((x + command.DeltaX < 0 || x + command.DeltaX >= Game.MapWidth)
-                || (y + command.DeltaY < 0 || y + command.DeltaY >= Game.MapHeight))
-            {
-                throw new Exception($"The object {creature.GetType()} falls out of the game field");
-            }
-
-            Animations.Add(
-                           new CreatureAnimation
-                           {
-                               Command = command,
-                               Creature = creature,
-                               Location = new Point(x * ElementSize, y * ElementSize),
-                               TargetLogicalLocation = new Point(x + command.DeltaX, y + command.DeltaY)
-                           });
         }
 
         Animations = Animations.OrderByDescending(z => z.Creature.GetDrawingPriority()).ToList();
