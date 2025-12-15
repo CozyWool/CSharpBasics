@@ -6,7 +6,8 @@ namespace PocketGoogle;
 public class Indexer : IIndexer
 {
     private readonly Dictionary<string, Dictionary<int, List<int>>> _index = new();
-    private readonly List<char> _separators = [' ', '.', ',', '!', '?', ':', '-', '\r', '\n', '–'];
+    private readonly Dictionary<int, HashSet<string>> _documentWords = new();
+    private static readonly HashSet<char> _separators = [' ', '.', ',', '!', '?', ':', '-', '\r', '\n', '–'];
 
     public void Add(int id, string documentText)
     {
@@ -25,6 +26,15 @@ public class Indexer : IIndexer
         {
             _index.Add(word, new Dictionary<int, List<int>>());
             ids = _index[word];
+        }
+
+        if (_documentWords.TryGetValue(id, out var words))
+        {
+            words.Add(word);
+        }
+        else
+        {
+            _documentWords.Add(id, [word]);
         }
 
         if (ids.TryGetValue(id, out var indexes))
@@ -72,9 +82,16 @@ public class Indexer : IIndexer
 
     public void Remove(int id)
     {
-        foreach (var (_, ids) in _index)
+        if (!_documentWords.TryGetValue(id, out var words))
         {
-            ids.Remove(id);
+            return;
         }
+
+        foreach (var word in words)
+        {
+            _index[word].Remove(id);
+        }
+
+        _documentWords.Remove(id);
     }
 }
