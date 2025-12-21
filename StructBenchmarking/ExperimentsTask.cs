@@ -4,35 +4,47 @@ namespace StructBenchmarking;
 
 public class Experiments
 {
-	public static ChartData BuildChartDataForArrayCreation(
-		IBenchmark benchmark, int repetitionsCount)
-	{
-		var classesTimes = new List<ExperimentResult>();
-		var structuresTimes = new List<ExperimentResult>();
-            
-		//...
+    public static ChartData BuildChartDataForArrayCreation(
+        IBenchmark benchmark, int repetitionsCount)
+    {
+        var classesTimes = new List<ExperimentResult>();
+        var structuresTimes = new List<ExperimentResult>();
 
-		return new ChartData
-		{
-			Title = "Create array",
-			ClassPoints = classesTimes,
-			StructPoints = structuresTimes,
-		};
-	}
+        foreach (var fieldCount in Constants.FieldCounts)
+        {
+            var classArrayCreationTask = new ClassArrayCreationTask(fieldCount);
+            var structArrayCreationTask = new StructArrayCreationTask(fieldCount);
 
-	public static ChartData BuildChartDataForMethodCall(
-		IBenchmark benchmark, int repetitionsCount)
-	{
-		var classesTimes = new List<ExperimentResult>();
-		var structuresTimes = new List<ExperimentResult>();
-            
-		//...
+            var averageClassesTime =
+                benchmark.MeasureDurationInMs(classArrayCreationTask, repetitionsCount) / repetitionsCount;
+            var averageStructuresTime =
+                benchmark.MeasureDurationInMs(structArrayCreationTask, repetitionsCount) / repetitionsCount;
 
-		return new ChartData
-		{
-			Title = "Call method with argument",
-			ClassPoints = classesTimes,
-			StructPoints = structuresTimes,
-		};
-	}
+            classesTimes.Add(new ExperimentResult(fieldCount, averageClassesTime));
+            structuresTimes.Add(new ExperimentResult(fieldCount, averageStructuresTime));
+        }
+
+        return new ChartData
+               {
+                   Title = "Create array",
+                   ClassPoints = classesTimes,
+                   StructPoints = structuresTimes,
+               };
+    }
+
+    public static ChartData BuildChartDataForMethodCall(
+        IBenchmark benchmark, int repetitionsCount)
+    {
+        var classesTimes = new List<ExperimentResult>();
+        var structuresTimes = new List<ExperimentResult>();
+
+        //...
+
+        return new ChartData
+               {
+                   Title = "Call method with argument",
+                   ClassPoints = classesTimes,
+                   StructPoints = structuresTimes,
+               };
+    }
 }

@@ -1,0 +1,8 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6be1e24c_002D9073_002D4143_002Dba13_002Deb316961fcd9/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="BenchmarkTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::A0841E32-6A85-51FC-28A0-780A10A5AC40::net8.0::StructBenchmarking.BenchmarkTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::A0841E32-6A85-51FC-28A0-780A10A5AC40::net8.0::StructBenchmarking.RealBenchmarkUsageSample.StringConstructorFasterThanStringBuilder&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::A0841E32-6A85-51FC-28A0-780A10A5AC40::net8.0::StructBenchmarking.RealBenchmarkUsageSample&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
