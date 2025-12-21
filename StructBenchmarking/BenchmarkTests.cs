@@ -25,7 +25,9 @@ public class BenchmarkTests
 			var sw = Stopwatch.StartNew();
 			while (true)
 				if (sw.ElapsedMilliseconds >= realDelay)
+				{
 					return;
+				}
 		}
 	}
 
