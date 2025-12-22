@@ -8,32 +8,20 @@ public class Experiments
         IBenchmark benchmark, int repetitionsCount)
     {
         var factory = new ArrayCreationTaskFactory();
-        var (classesTimes, structuresTimes) = RunExperiment(factory, benchmark, repetitionsCount);
 
-        return new ChartData
-               {
-                   Title = "Create array",
-                   ClassPoints = classesTimes,
-                   StructPoints = structuresTimes,
-               };
+        return RunExperiment(factory, benchmark, repetitionsCount, "Create array");
     }
 
     public static ChartData BuildChartDataForMethodCall(
         IBenchmark benchmark, int repetitionsCount)
     {
         var factory = new MethodCallTaskFactory();
-        var (classesTimes, structuresTimes) = RunExperiment(factory, benchmark, repetitionsCount);
 
-        return new ChartData
-               {
-                   Title = "Call method with argument",
-                   ClassPoints = classesTimes,
-                   StructPoints = structuresTimes,
-               };
+        return RunExperiment(factory, benchmark, repetitionsCount, "Call method with argument");
     }
 
-    private static (List<ExperimentResult>, List<ExperimentResult>) RunExperiment(
-        ITaskFactory taskFactory, IBenchmark benchmark, int repetitionsCount)
+    private static ChartData RunExperiment(
+        ITaskFactory taskFactory, IBenchmark benchmark, int repetitionsCount, string title)
     {
         var classesTimes = new List<ExperimentResult>();
         var structuresTimes = new List<ExperimentResult>();
@@ -52,7 +40,12 @@ public class Experiments
             structuresTimes.Add(new ExperimentResult(size, averageStructuresTime));
         }
 
-        return (classesTimes, structuresTimes);
+        return new ChartData
+               {
+                   Title = title,
+                   ClassPoints = classesTimes,
+                   StructPoints = structuresTimes,
+               };
     }
 }
 

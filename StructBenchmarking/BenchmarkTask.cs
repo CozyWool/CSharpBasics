@@ -28,10 +28,17 @@ public class Benchmark : IBenchmark
 
 public class StringBuilderTask : ITask
 {
+    private readonly int _symbolCount;
+
+    public StringBuilderTask(int symbolCount)
+    {
+        _symbolCount = symbolCount;
+    }
+
     public void Run()
     {
         var sb = new StringBuilder();
-        for (var i = 0; i < 10000; ++i)
+        for (var i = 0; i < _symbolCount; ++i)
         {
             sb.Append('a');
         }
@@ -42,23 +49,31 @@ public class StringBuilderTask : ITask
 
 public class StringConstructorTask : ITask
 {
+    private readonly int _symbolCount;
+
+    public StringConstructorTask(int symbolCount)
+    {
+        _symbolCount = symbolCount;
+    }
+
     public void Run()
     {
-        var s = new string('a', 10000);
+        var s = new string('a', _symbolCount);
     }
 }
 
 [TestFixture]
 public class RealBenchmarkUsageSample
 {
-    [Test]
-    public void StringConstructorFasterThanStringBuilder()
+	[TestCase(10000, 7500)]
+    public void StringConstructorFasterThanStringBuilder(int symbolCount, int repetitionsCount)
     {
-        var stringBuilderTask = new StringBuilderTask();
-        var stringConstructorTask = new StringConstructorTask();
+        var stringBuilderTask = new StringBuilderTask(symbolCount);
+        var stringConstructorTask = new StringConstructorTask(symbolCount);
         var benchmark = new Benchmark();
-        var measureStringBuilder = benchmark.MeasureDurationInMs(stringBuilderTask, 7500);
-        var measureStringConstructor = benchmark.MeasureDurationInMs(stringConstructorTask, 7500);
+
+        var measureStringBuilder = benchmark.MeasureDurationInMs(stringBuilderTask, repetitionsCount);
+        var measureStringConstructor = benchmark.MeasureDurationInMs(stringConstructorTask, repetitionsCount);
         Assert.That(measureStringConstructor, Is.LessThan(measureStringBuilder));
     }
 }
