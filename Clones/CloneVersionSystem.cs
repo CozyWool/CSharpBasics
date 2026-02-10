@@ -2,39 +2,39 @@
 
 namespace Clones;
 
-public class LinkedListStack<T>
+public class ProgramStack
 {
-    private readonly LinkedList<T> _linkedList;
+    private readonly LinkedList<int> _linkedList;
 
-    public LinkedListStack() : this([])
+    public ProgramStack() : this([])
     {
     }
 
-    public LinkedListStack(LinkedList<T> linkedList)
+    public ProgramStack(LinkedList<int> linkedList)
     {
         _linkedList = linkedList;
     }
 
-    public void Push(T item)
+    public void Push(int item)
     {
         _linkedList.AddLast(item);
     }
 
-    public T Pop()
+    public int Pop()
     {
-        var item = _linkedList.Last.Value;
-        _linkedList.RemoveLast();
-        return item;
+        if (_linkedList.Last != null)
+        {
+            var item = _linkedList.Last.Value;
+            _linkedList.RemoveLast();
+            return item;
+        }
+
+        return -1;
     }
 
     public object Peek()
     {
-        if (_linkedList.Last is null)
-        {
-            return null;
-        }
-
-        var item = _linkedList.Last.Value;
+        var item = _linkedList.Last?.Value;
         return item;
     }
 
@@ -45,56 +45,35 @@ public class LinkedListStack<T>
 
     public int Count => _linkedList.Count;
 
-    public LinkedListStack<T> Clone()
+    public ProgramStack Clone()
     {
-        var linkedList = new LinkedList<T>();
+        var linkedList = new LinkedList<int>();
         foreach (var item in _linkedList)
         {
             linkedList.AddLast(item);
         }
 
-        return new LinkedListStack<T>(linkedList);
+        return new ProgramStack(linkedList);
     }
 }
 
 public class Clone
 {
-    private LinkedListStack<LearnCommand> _rollbackHistory = new();
-    private LinkedListStack<LearnCommand> _learnHistory = new();
-
-    public void AddLearnCommand(LearnCommand learnCommand)
-    {
-        _learnHistory.Push(learnCommand);
-    }
-
-    public void RemoveLastLearnCommand()
-    {
-        _learnHistory.Pop();
-    }
-
-    public void AddRollbackCommand(LearnCommand learnCommand)
-    {
-        _rollbackHistory.Push(learnCommand);
-    }
-
-    public void RemoveLastRollbackCommand()
-    {
-        _rollbackHistory.Pop();
-    }
+    private ProgramStack _rollbackHistory = new();
+    private ProgramStack _learnHistory = new();
 
     public void Learn(int programNumber)
     {
-        var command = new LearnCommand(this, programNumber);
-        command.Execute();
+        _learnHistory.Push(programNumber);
         _rollbackHistory.Clear();
     }
 
     public string Check()
     {
         var item = _learnHistory.Peek();
-        if (item is LearnCommand command)
+        if (item is int programNumber)
         {
-            return command.ProgramNumber.ToString();
+            return programNumber.ToString();
         }
 
         return "basic";
@@ -102,14 +81,14 @@ public class Clone
 
     public void Rollback()
     {
-        var command = _learnHistory.Peek() as LearnCommand;
-        command.Rollback();
+        var programNumber = _learnHistory.Pop();
+        _rollbackHistory.Push(programNumber);
     }
 
     public void Relearn()
     {
-        var command = _rollbackHistory.Peek() as LearnCommand;
-        command.Relearn();
+        var programNumber = _rollbackHistory.Pop();
+        _learnHistory.Push(programNumber);
     }
 
     public Clone MakeClone()
@@ -120,35 +99,6 @@ public class Clone
                         _rollbackHistory = _rollbackHistory.Clone()
                     };
         return clone;
-    }
-}
-
-public class LearnCommand
-{
-    private readonly Clone _learningClone;
-    public int ProgramNumber { get; set; }
-
-    public LearnCommand(Clone learningClone, int programNumber)
-    {
-        _learningClone = learningClone;
-        ProgramNumber = programNumber;
-    }
-
-    public void Execute()
-    {
-        _learningClone.AddLearnCommand(this);
-    }
-
-    public void Rollback()
-    {
-        _learningClone.RemoveLastLearnCommand();
-        _learningClone.AddRollbackCommand(this);
-    }
-
-    public void Relearn()
-    {
-        Execute();
-        _learningClone.RemoveLastRollbackCommand();
     }
 }
 

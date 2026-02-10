@@ -98,7 +98,10 @@ public class CloneVersionSystem_should
 		foreach (var command in queries)
 		{
 			var result = cvs.Execute(command);
-			if (result != null) results.Add(result);
+			if (result != null)
+			{
+				results.Add(result);
+			}
 		}
 		return results;
 	}
