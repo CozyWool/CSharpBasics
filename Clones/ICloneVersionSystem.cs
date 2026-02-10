@@ -2,10 +2,7 @@
 
 public interface ICloneVersionSystem
 {
-	string Execute(string query)
-	{
-
-	}
+	string Execute(string query);
 }
 
 public class Factory
