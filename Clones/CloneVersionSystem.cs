@@ -4,57 +4,33 @@ namespace Clones;
 
 public class ProgramStack
 {
-    private readonly LinkedList<int> _linkedList;
+    private Item _current;
 
-    public ProgramStack() : this([])
+    public ProgramStack()
     {
     }
 
-    public ProgramStack(LinkedList<int> linkedList)
-    {
-        _linkedList = linkedList;
-    }
+    public ProgramStack(ProgramStack other) =>
+        _current = other._current;
 
-    public void Push(int item)
-    {
-        _linkedList.AddLast(item);
-    }
+    public void Clear() => _current = null;
 
     public int Pop()
     {
-        if (_linkedList.Last != null)
-        {
-            var item = _linkedList.Last.Value;
-            _linkedList.RemoveLast();
-            return item;
-        }
-
-        return -1;
+        var value = _current.Value;
+        _current = _current.Previous;
+        return value;
     }
 
-    public object Peek()
-    {
-        var item = _linkedList.Last?.Value;
-        return item;
-    }
+    public void Push(int value) => _current = new Item(value, _current);
 
-    public void Clear()
-    {
-        _linkedList.Clear();
-    }
+    public int? Peek() => _current?.Value;
+}
 
-    public int Count => _linkedList.Count;
-
-    public ProgramStack Clone()
-    {
-        var linkedList = new LinkedList<int>();
-        foreach (var item in _linkedList)
-        {
-            linkedList.AddLast(item);
-        }
-
-        return new ProgramStack(linkedList);
-    }
+public class Item(int value, Item previous)
+{
+    public int Value { get; set; } = value;
+    public Item Previous { get; set; } = previous;
 }
 
 public class Clone
@@ -62,21 +38,26 @@ public class Clone
     private ProgramStack _rollbackHistory = new();
     private ProgramStack _learnHistory = new();
 
+    public Clone()
+    {
+    }
+
+    public Clone(ProgramStack learnHistory, ProgramStack rollbackHistory)
+    {
+        _learnHistory = new ProgramStack(learnHistory);
+        _rollbackHistory = new ProgramStack(rollbackHistory);
+    }
+
     public void Learn(int programNumber)
     {
-        _learnHistory.Push(programNumber);
         _rollbackHistory.Clear();
+        _learnHistory.Push(programNumber);
     }
 
     public string Check()
     {
-        var item = _learnHistory.Peek();
-        if (item is int programNumber)
-        {
-            return programNumber.ToString();
-        }
-
-        return "basic";
+        var programNumber = _learnHistory.Peek();
+        return programNumber is not null ? programNumber.ToString() : "basic";
     }
 
     public void Rollback()
@@ -93,11 +74,7 @@ public class Clone
 
     public Clone MakeClone()
     {
-        var clone = new Clone
-                    {
-                        _learnHistory = _learnHistory.Clone(),
-                        _rollbackHistory = _rollbackHistory.Clone()
-                    };
+        var clone = new Clone(_learnHistory, _rollbackHistory);
         return clone;
     }
 }
