@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace LimitedSizeStack;
 
 public class LimitedSizeStack<T>
 {
     private readonly int _undoLimit;
-    private LinkedList<T> _linkedList;
+    private readonly LinkedList<T> _linkedList;
 
     public LimitedSizeStack(int undoLimit)
     {
         _undoLimit = undoLimit;
-        _linkedList = new LinkedList<T>();
+        _linkedList = [];
     }
 
     public void Push(T item)
@@ -24,6 +25,11 @@ public class LimitedSizeStack<T>
 
     public T Pop()
     {
+        if (_linkedList.Count == 0)
+        {
+            throw new InvalidOperationException("Stack is empty");
+        }
+
         var item = _linkedList.Last.Value;
         _linkedList.RemoveLast();
         return item;
