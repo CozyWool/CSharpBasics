@@ -6,10 +6,10 @@ public static class ExpSmoothingTask
 {
     public static IEnumerable<DataPoint> SmoothExponentialy(this IEnumerable<DataPoint> data, double alpha)
     {
-        double? previousSmoothed = null;
+        var previousSmoothed = double.NaN;
         foreach (var current in data)
         {
-            if (previousSmoothed.HasValue)
+            if (!double.IsNaN(previousSmoothed))
             {
                 previousSmoothed = current.OriginalY * alpha + (1 - alpha) * previousSmoothed;
             }
@@ -18,7 +18,7 @@ public static class ExpSmoothingTask
                 previousSmoothed = current.OriginalY;
             }
 
-            yield return current.WithExpSmoothedY(previousSmoothed.Value);
+            yield return current.WithExpSmoothedY(previousSmoothed);
         }
     }
 }
