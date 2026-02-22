@@ -122,7 +122,7 @@ public class ReadonlyBytesTests
 	{
 		var items = new ReadonlyBytes(Enumerable.Repeat((byte)6, 100000).ToArray());
 		var hash = items.GetHashCode();
-		for (int i = 0; i < 100000; i++)
+		for (var i = 0; i < 100000; i++)
 			Assert.AreEqual(hash, items.GetHashCode());
 	}
 
