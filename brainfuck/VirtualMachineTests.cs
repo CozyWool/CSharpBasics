@@ -116,10 +116,15 @@ public class VirtualMachineTests
 		vm.RegisterCommand('a', b => { res += "a"; });
 		vm.RegisterCommand('b', b => { res += "b"; });
 		if (res != "")
+		{
 			Assert.Fail("Instructions should not be executed before Run() call");
+		}
+
 		vm.Run();
 		if (res != "")
+		{
 			Assert.AreEqual("abbaaa", res, "Execution order of program 'abbaaa'");
+		}
 	}
 
 	[Test]

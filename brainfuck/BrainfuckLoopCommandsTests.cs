@@ -114,9 +114,9 @@ public class BrainfuckLoopCommandsTests
 	{
 		var s = new StringBuilder();
 		var size = 50000;
-		for (int i = 0; i < size; i++) s.Append("+[->.");
+		for (var i = 0; i < size; i++) s.Append("+[->.");
 		s.Append("+[-]<");
-		for (int i = 0; i < size; i++) s.Append("]<");
+		for (var i = 0; i < size; i++) s.Append("]<");
 		var program = s.ToString();
 		Run(program);
 	}
@@ -127,9 +127,9 @@ public class BrainfuckLoopCommandsTests
 	{
 		var s = new StringBuilder();
 		var size = 30000;
-		for (int i = 0; i < size; i++) s.Append("++>");
-		for (int i = 0; i < size; i++) s.Append("<[-");
-		for (int i = 0; i < size; i++) s.Append("]>");
+		for (var i = 0; i < size; i++) s.Append("++>");
+		for (var i = 0; i < size; i++) s.Append("<[-");
+		for (var i = 0; i < size; i++) s.Append("]>");
 		var program = s.ToString();
 		Run(program);
 	}
