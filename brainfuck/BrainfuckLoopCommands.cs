@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace func.brainfuck
 {
 	public class BrainfuckLoopCommands

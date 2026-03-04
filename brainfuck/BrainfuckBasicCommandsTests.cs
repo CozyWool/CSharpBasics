@@ -103,7 +103,7 @@ public class BrainfuckBasicCommandsTests
 	}
 
 	[Test]
-	public void IgnoreOtehrSymbols()
+	public void IgnoreOtherSymbols()
 	{
 		Assert.AreEqual("Q", 
 			Run("Q!@#$%&*()."));
