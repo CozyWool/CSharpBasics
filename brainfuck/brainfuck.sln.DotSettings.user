@@ -3,5 +3,6 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::4952B70C-9974-4E05-AC3B-A86596A0C537::net8.0::func.brainfuck.VirtualMachineTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::4952B70C-9974-4E05-AC3B-A86596A0C537::net8.0::func.brainfuck.BrainfuckBasicCommandsTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::4952B70C-9974-4E05-AC3B-A86596A0C537::net8.0::func.brainfuck.BrainfuckLoopCommandsTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
