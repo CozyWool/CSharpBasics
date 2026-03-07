@@ -51,11 +51,7 @@ public class ReadonlyBytes : IEnumerable<byte>
 
     public override string ToString()
     {
-        _toStringCache ??= new StringBuilder()
-                           .Append('[')
-                           .AppendJoin(", ", _bytes)
-                           .Append(']')
-                           .ToString();
+        _toStringCache ??= $"[{string.Join(", ", _bytes)}]";
 
         return _toStringCache;
     }
@@ -67,7 +63,16 @@ public class ReadonlyBytes : IEnumerable<byte>
             return false;
         }
 
-        var other = (ReadonlyBytes) obj;
+        return Equals((ReadonlyBytes) obj);
+    }
+
+    public bool Equals(ReadonlyBytes other)
+    {
+        if (other is null || other.GetType() != GetType())
+        {
+            return false;
+        }
+
         if (other.Length != Length)
         {
             return false;
