@@ -9,7 +9,7 @@ public class ForcesTask
     /// Сила тяги направлена вдоль ракеты и равна по модулю forceValue.
     /// </summary>
     public static RocketForce GetThrustForce(double forceValue) =>
-        r => new Vector(forceValue * double.Cos(r.Direction), forceValue * double.Sin(r.Direction));
+        r => new Vector(1, 0).Rotate(r.Direction) * forceValue;
 
     /// <summary>
     /// Преобразует делегат силы гравитации, в делегат силы, действующей на ракету
