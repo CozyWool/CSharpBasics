@@ -21,7 +21,7 @@
         <DockPanel Margin="10,5" >
             <Button Name="ButtonRemove" />
             <Button Name="ButtonUndo" />
-            <!-- <Button Name="ButtonMoveUp" /> -->
+            <Button Name="ButtonMoveUp" />
         </DockPanel>
 
         <ListBox

@@ -38,7 +38,7 @@ public class TaskListViewModel : ReactiveObject
 	
 	public void MoveUpItem(int index)
 	{
-		//model.MoveUpItem(index);
+		model.MoveUpItem(index);
 		Update();
 	}
 

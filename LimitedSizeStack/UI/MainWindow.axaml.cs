@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 
@@ -6,75 +7,97 @@ namespace LimitedSizeStack.UI;
 
 public partial class MainWindow : Window
 {
-	private readonly TaskListViewModel model;
+    private readonly TaskListViewModel model;
 
-	public MainWindow()
-	{
-		InitializeComponent();
+    public MainWindow()
+    {
+        InitializeComponent();
 
-		var list = new List<string> { "Составить список дел на сегодня", "Домашка по C#", "Решить задачу 1519" };
-		var listModel = new ListModel<string>(list, 20);
+        var list = new List<string> {"Составить список дел на сегодня", "Домашка по C#", "Решить задачу 1519"};
+        var listModel = new ListModel<string>(list, 20);
 
-		model = new TaskListViewModel(listModel);
-		
-		//Add
-		ButtonAdd.Content = "Добавить";
-		ButtonAdd.Click += (_, __) => { AddTask(); };
+        model = new TaskListViewModel(listModel);
 
-		//Undo
-		ButtonUndo.Content = "Отменить";
-		ButtonUndo.IsEnabled = model.CanUndo;
-		ButtonUndo.Click += (_, __) =>
-		{
-			if (model.CanUndo)
-				model.Undo();
-		};
+        //Add
+        ButtonAdd.Content = "Добавить";
+        ButtonAdd.Click += (_, __) => { AddTask(); };
 
-		//Remove
-		ButtonRemove.Content = "Удалить";
-		ButtonRemove.IsEnabled = false;
-		ButtonRemove.Click += (_, __) =>
-		{
-			var index = TasksList.SelectedIndex;
-			if (index == -1) return;
+        //Undo
+        ButtonUndo.Content = "Отменить";
+        ButtonUndo.IsEnabled = model.CanUndo;
+        ButtonUndo.Click += (_, __) =>
+                            {
+                                if (model.CanUndo)
+                                {
+                                    model.Undo();
+                                }
+                            };
 
-			model.RemoveItem(index);
-			ButtonRemove.IsEnabled = false;
-		};
+        //Remove
+        ButtonRemove.Content = "Удалить";
+        ButtonRemove.IsEnabled = false;
+        ButtonRemove.Click += (_, __) =>
+                              {
+                                  var index = TasksList.SelectedIndex;
+                                  if (index == -1)
+                                  {
+                                      return;
+                                  }
 
-		//MoveUp
-		//ButtonMoveUp.Content = ...
+                                  model.RemoveItem(index);
+                                  ButtonRemove.IsEnabled = false;
+                              };
 
-		TextBox.KeyDown += (_, args) =>
-		{
-			if (args.Key != Key.Enter) return;
+        //MoveUp
+        ButtonMoveUp.Content = "Поднять вверх";
+        ButtonMoveUp.IsEnabled = TasksList.SelectedIndex > 0;
+        ButtonMoveUp.Click += (_, __) =>
+                              {
+                                  var index = TasksList.SelectedIndex;
+                                  if (index < 1)
+                                  {
+                                      return;
+                                  }
 
-			AddTask();
-			UpdateUndo();
-			args.Handled = true;
-		};
+                                  model.MoveUpItem(index);
+                              };
 
-		TasksList.DataContext = model;
-		TasksList.SelectionChanged += (_, __) =>
-		{
-			ButtonRemove.IsEnabled = TasksList.SelectedIndex != -1;
-		};
+        TextBox.KeyDown += (_, args) =>
+                           {
+                               if (args.Key != Key.Enter)
+                               {
+                                   return;
+                               }
 
-		// updating undo on each button click
-		foreach (var button in new[] { ButtonRemove, ButtonUndo, ButtonAdd, }) // ButtonMoveUp
-			button.Click += (_, __) => UpdateUndo();
-	}
+                               AddTask();
+                               UpdateUndo();
+                               args.Handled = true;
+                           };
 
-	private void UpdateUndo()
-	{
-		ButtonUndo.IsEnabled = model.CanUndo;
-	}
+        TasksList.DataContext = model;
+        TasksList.SelectionChanged += (_, __) =>
+                                      {
+                                          ButtonRemove.IsEnabled = TasksList.SelectedIndex != -1;
+                                          ButtonMoveUp.IsEnabled = TasksList.SelectedIndex > 0;
+                                      };
 
-	private void AddTask()
-	{
-		model.AddItem(string.IsNullOrWhiteSpace(TextBox.Text)
-			? "(empty)"
-			: TextBox.Text);
-		TextBox.Text = "";
-	}
+        // updating undo on each button click
+        foreach (var button in new[] {ButtonRemove, ButtonUndo, ButtonAdd, ButtonMoveUp}) // ButtonMoveUp
+        {
+            button.Click += (_, __) => UpdateUndo();
+        }
+    }
+
+    private void UpdateUndo()
+    {
+        ButtonUndo.IsEnabled = model.CanUndo;
+    }
+
+    private void AddTask()
+    {
+        model.AddItem(string.IsNullOrWhiteSpace(TextBox.Text)
+                          ? "(empty)"
+                          : TextBox.Text);
+        TextBox.Text = "";
+    }
 }

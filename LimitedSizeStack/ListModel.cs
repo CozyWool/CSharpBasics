@@ -56,6 +56,31 @@ public class RemoveCommand<TItem> : IUndoableCommand
     }
 }
 
+public class MoveUpCommand<TItem> : IUndoableCommand
+{
+    private readonly ListModel<TItem> _listModel;
+    private readonly int _index;
+    private TItem _item;
+
+    public MoveUpCommand(ListModel<TItem> listModel, int index)
+    {
+        _listModel = listModel;
+        _index = index;
+    }
+
+    public void Execute()
+    {
+        (_listModel.Items[_index - 1], _listModel.Items[_index]) =
+            (_listModel.Items[_index], _listModel.Items[_index - 1]);
+    }
+
+    public void Undo()
+    {
+        (_listModel.Items[_index - 1], _listModel.Items[_index]) =
+            (_listModel.Items[_index], _listModel.Items[_index - 1]);
+    }
+}
+
 public class ListModel<TItem>
 {
     private readonly LimitedSizeStack<IUndoableCommand> _commandHistory;
@@ -94,5 +119,12 @@ public class ListModel<TItem>
     {
         var command = _commandHistory.Pop();
         command.Undo();
+    }
+
+    public void MoveUpItem(int index)
+    {
+        var moveUpCommand = new MoveUpCommand<TItem>(this, index);
+        moveUpCommand.Execute();
+        _commandHistory.Push(moveUpCommand);
     }
 }

@@ -119,7 +119,10 @@ public class LimitedSizeStack_should
 		var counter = new Counter();
 		var stack = new LimitedSizeStack<FinalizableClass>(30);
 		for (var i = 0; i < 100; ++i)
+		{
 			stack.Push(new FinalizableClass(counter));
+		}
+
 		// Явный вызов сборщика мусора. В обычных программах так делать не нужно почти никогда. 
 		// Но в этом тесте нам нужно убедиться, что на вытесненные из стека элементы больше не осталось ссылок,
 		// Для этого мы вызываем сборщик мусора и проверяем, у скольки объектов сборщик мусора вызвал деструктор
