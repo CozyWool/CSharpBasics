@@ -43,10 +43,13 @@ public class Walker
 	{
 		var newPoint = Position + directionToOffset[direction];
 		if (!map.InBounds(newPoint))
+		{
 			return new Walker(Position, Position);
+		}
+
 		return map.Dungeon[newPoint.X, newPoint.Y] == MapCell.Wall
-			? new Walker(newPoint, newPoint)
-			: new Walker(newPoint);
+			       ? new Walker(newPoint, newPoint)
+			       : new Walker(newPoint);
 	}
 
 	public static MoveDirection ConvertOffsetToDirection(Point offset)

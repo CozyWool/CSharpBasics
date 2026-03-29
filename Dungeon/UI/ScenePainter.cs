@@ -77,13 +77,18 @@ public class ScenePainter : Control
 		lastMouseClick = position;
 		pathsToChests = null;
 		if (!currentMap.InBounds(position) ||
-		    currentMap.Dungeon[lastMouseClick.X, lastMouseClick.Y] != MapCell.Empty) return;
-		
+		    currentMap.Dungeon[lastMouseClick.X, lastMouseClick.Y] != MapCell.Empty)
+		{
+			return;
+		}
+
 		pathsToChests = BfsTask.FindPaths(currentMap, lastMouseClick, currentMap.Chests)
-			.Select(x => x.ToList()).ToList();
+		                       .Select(x => x.ToList()).ToList();
 		
 		foreach (var pathsToChest in pathsToChests)
+		{
 			pathsToChest.Reverse();
+		}
 	}
 	
 	protected override void OnPointerReleased(PointerReleasedEventArgs e)
@@ -97,17 +102,22 @@ public class ScenePainter : Control
 		DrawLevel(context);
 		DrawMainPath(context, mainIteration);
 		if (pathsToChests != null && lastMouseClick.HasValue)
+		{
 			DrawAdditionalPaths(context, lastMouseClick);
+		}
 	}
 
 	private void DrawLevel(DrawingContext context)
 	{
 		RenderMap(context);
 		foreach (var chest in currentMap.Chests)
+		{
 			context.DrawImage(chestImg,
-				new Rect(chest.Location.X * cellWidth, chest.Location.Y * cellHeight, cellWidth, cellHeight));
+			                  new Rect(chest.Location.X * cellWidth, chest.Location.Y * cellHeight, cellWidth, cellHeight));
+		}
+
 		context.DrawImage(castleImg,
-			new Rect(currentMap.Exit.X * cellWidth, currentMap.Exit.Y * cellHeight, cellWidth, cellHeight));
+		                  new Rect(currentMap.Exit.X * cellWidth, currentMap.Exit.Y * cellHeight, cellWidth, cellHeight));
 	}
 
 	private void DrawPath(DrawingContext context, Color color, IEnumerable<Point> path)
@@ -117,7 +127,9 @@ public class ScenePainter : Control
 		var newStyle = new DashStyle(new[] { cellWidth * 0.125f, cellHeight * 0.125f }, 1d);
 		var pen = new Pen(color.ToUint32(), cellHeight * 0.125f, newStyle);
 		for (var i = 0; i < points.Length - 1; i++)
+		{
 			context.DrawLine(pen, points[i], points[i + 1]);
+		}
 	}
 
 	private void DrawMainPath(DrawingContext context, int interation)
@@ -133,7 +145,9 @@ public class ScenePainter : Control
 		context.FillRectangle(Brushes.Red,
 			new Rect(lastClick.X * cellWidth, lastClick.Y * cellHeight, cellWidth, cellHeight));
 		foreach (var pathToChest in pathsToChests)
+		{
 			DrawPath(context, Colors.Red, pathToChest);
+		}
 	}
 
 	private IEnumerable<Point> TransformPath(Map map, MoveDirection[] path)
@@ -145,7 +159,9 @@ public class ScenePainter : Control
 			walker = walker.WalkInDirection(map, direction);
 			yield return walker.Position;
 			if (walker.PointOfCollision.HasValue)
+			{
 				break;
+			}
 		}
 	}
 
