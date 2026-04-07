@@ -56,28 +56,7 @@ public class DungeonTask
     private static MoveDirection[] ParseToMoveDirections(List<Point> bestPath)
     {
         return bestPath
-               .Zip(bestPath.Skip(1), GetDirection)
+               .Zip(bestPath.Skip(1), (from, to) => Walker.ConvertOffsetToDirection(to - from))
                .ToArray();
-    }
-
-    private static MoveDirection GetDirection(Point from, Point to)
-    {
-        switch (to.X - from.X)
-        {
-            case 1:
-                return MoveDirection.Right;
-            case -1:
-                return MoveDirection.Left;
-        }
-
-        switch (to.Y - from.Y)
-        {
-            case 1:
-                return MoveDirection.Down;
-            case -1:
-                return MoveDirection.Up;
-        }
-
-        throw new ArgumentException("Invalid move");
     }
 }
