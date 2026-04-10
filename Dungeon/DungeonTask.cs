@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Dungeon;
@@ -8,13 +7,8 @@ public class DungeonTask
 {
     public static MoveDirection[] FindShortestPath(Map map)
     {
-        // var startToEnd = BfsTask.FindPaths(map, map.Exit, [new Chest(map.Exit, 0)]).ToList();
-        // if (startToEnd.Any(x => map.Chests.Any(c => c.Location.Equals(x.Value))))
-        // {
-        //     return ParseToMoveDirections(startToEnd.First().ToList());
-        // }
-
-        var startToChest = BfsTask.FindPaths(map, map.InitialPosition, map.Chests).ToList();
+        var startToChest = BfsTask.FindPaths(map, map.InitialPosition, map.Chests)
+                                  .ToDictionary(path => path.Value);
         if (map.Chests.Length == 0 || startToChest.Count == 0)
         {
             return FindPathWithoutChests(map);
@@ -24,25 +18,37 @@ public class DungeonTask
         return bestPath is null ? [] : ParseToMoveDirections(bestPath);
     }
 
-    private static List<Point>? FindBestPathThroughChests(Map map, List<SinglyLinkedList<Point>> fromStart)
+    private static List<Point>? FindBestPathThroughChests(Map map, Dictionary<Point, SinglyLinkedList<Point>> startDict)
     {
-        var endToChest = BfsTask.FindPaths(map, map.Exit, map.Chests);
-        var joined = fromStart.Join(endToChest,
-                                    x => x.First(),
-                                    x => x.First(),
-                                    (start, end) =>
-                                        new
-                                        {
-                                            Path = start.Reverse().Concat(end.Skip(1)).ToList(),
-                                            ChestLocation = start.First()
-                                        });
+        var endDict = BfsTask.FindPaths(map, map.Exit, map.Chests)
+                             .ToDictionary(path => path.Value);
 
-        var chestDict = map.Chests.ToDictionary(c => c.Location, c => c.Value);
-        var bestPath = joined
-                       .OrderBy(x => x.Path.Count)
-                       .ThenByDescending(x => chestDict[x.ChestLocation])
-                       .FirstOrDefault();
-        return bestPath?.Path;
+        SinglyLinkedList<Point>? bestStart = null;
+        SinglyLinkedList<Point>? bestEnd = null;
+        var bestLength = int.MaxValue;
+        var bestValue = -1;
+
+        foreach (var chest in map.Chests
+                                 .Where(c => startDict.ContainsKey(c.Location) && endDict.ContainsKey(c.Location)))
+        {
+            var startPath = startDict[chest.Location];
+            var endPath = endDict[chest.Location];
+
+            var length = startPath.Length + endPath.Length - 1;
+
+            if (length < bestLength ||
+                (length == bestLength && chest.Value > bestValue))
+            {
+                bestLength = length;
+                bestValue = chest.Value;
+                bestStart = startPath;
+                bestEnd = endPath;
+            }
+        }
+
+        return bestStart?.Reverse()
+                        .Concat(bestEnd.Skip(1))
+                        .ToList();
     }
 
     private static MoveDirection[] FindPathWithoutChests(Map map)
