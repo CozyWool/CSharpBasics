@@ -13,15 +13,15 @@ public class Walker
 		{ MoveDirection.Right, new Point(1, 0) }
 	};
 
-	private static readonly Dictionary<Point, MoveDirection> offsetToDirection = new()
-	{
-		{ new Point(0, -1), MoveDirection.Up },
-		{ new Point(0, 1), MoveDirection.Down },
-		{ new Point(-1, 0), MoveDirection.Left },
-		{ new Point(1, 0), MoveDirection.Right }
-	};
+		private static readonly Dictionary<Point, MoveDirection> offsetToDirection = new()
+		{
+			{ new Point(0, -1), MoveDirection.Up },
+			{ new Point(0, 1), MoveDirection.Down },
+			{ new Point(-1, 0), MoveDirection.Left },
+			{ new Point(1, 0), MoveDirection.Right }
+		};
 
-	public static readonly IReadOnlyList<Point> PossibleDirections = offsetToDirection.Keys.ToList();
+		public static readonly IReadOnlyList<Point> PossibleDirections = offsetToDirection.Keys.ToList();
 
 
 	public Point Position { get; }
