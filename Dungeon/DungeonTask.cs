@@ -31,9 +31,7 @@ public class DungeonTask
                 StartPath = startDict[chest.Location],
                 EndPath = endDict[chest.Location],
             })
-            .OrderBy(chest => chest.StartPath.Length + chest.EndPath.Length - 1)
-            .ThenByDescending(chest => chest.Value)
-            .FirstOrDefault();
+            .MinBy(chest => (chest.StartPath.Length + chest.EndPath.Length - 1, -chest.Value));
 
         return best?.StartPath.Reverse()
             .Concat(best.EndPath.Skip(1))
