@@ -9,15 +9,7 @@ public class RivalsTask
 
     public static IEnumerable<OwnedLocation> AssignOwners(Map map)
     {
-        var used = new HashSet<Point>();
-        var queue = InitQueue(map, used);
-
-        return BreadthFirstSearch(map, queue, used);
-    }
-
-    private static IEnumerable<OwnedLocation> BreadthFirstSearch(Map map, Queue<OwnedLocation> queue,
-                                                                 HashSet<Point> used)
-    {
+        var (used, queue) = InitBfs(map);
         while (queue.Count > 0)
         {
             var currentPoint = queue.Dequeue();
@@ -34,8 +26,9 @@ public class RivalsTask
         }
     }
 
-    private static Queue<OwnedLocation> InitQueue(Map map, HashSet<Point> used)
+    private static (HashSet<Point> used, Queue<OwnedLocation> queue) InitBfs(Map map)
     {
+        var used = new HashSet<Point>();
         var queue = new Queue<OwnedLocation>();
         for (var i = 0; i < map.Players.Length; i++)
         {
@@ -45,7 +38,7 @@ public class RivalsTask
             used.Add(player);
         }
 
-        return queue;
+        return (used, queue);
     }
 
     private static IEnumerable<Point> GetNextPoints(Map map, Point currentPoint)
@@ -56,7 +49,7 @@ public class RivalsTask
         }
 
         return PossibleDirections
-               .Select(direction => new Point(currentPoint.X + direction.X, currentPoint.Y + direction.Y))
+               .Select(direction => currentPoint + direction)
                .Where(nextPoint => map.InBounds(nextPoint) && map.Maze[nextPoint.X, nextPoint.Y] == MapCell.Empty);
     }
 }
