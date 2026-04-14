@@ -73,6 +73,6 @@ public class DijkstraPathFinder
 
     private static IEnumerable<Point> GetNextPoints(State state, Point currentPoint) =>
         _possibleDirections
-            .Select(direction => new Point(currentPoint.X + direction.X, currentPoint.Y + direction.Y))
+            .Select(direction => currentPoint + direction)
             .Where(nextPoint => state.InsideMap(nextPoint) && !state.IsWallAt(nextPoint));
 }
