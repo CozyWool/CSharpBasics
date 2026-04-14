@@ -1,7 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c985acc5_002Da5c9_002D49b1_002D84b9_002Dfce1e82f1367/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Bfs_Should" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::3A7E94EF-31EF-E270-6167-C58D17A81ACC::net8.0::Dungeon.Bfs_Should&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::3A7E94EF-31EF-E270-6167-C58D17A81ACC::net8.0::Dungeon.Dungeon_Should&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c985acc5_002Da5c9_002D49b1_002D84b9_002Dfce1e82f1367/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Bfs_Should" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::3A7E94EF-31EF-E270-6167-C58D17A81ACC::net8.0::Dungeon.Bfs_Should&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::3A7E94EF-31EF-E270-6167-C58D17A81ACC::net8.0::Dungeon.Dungeon_Should&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
