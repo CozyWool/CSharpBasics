@@ -1,45 +1,45 @@
-﻿// описание ребер разделены пробелами
-// дефисом разделены номера вершин ребраCheckHasCycle("0-1", false);
+﻿namespace ConsoleApp2;
 
-CheckHasCycle("0-1 0-2", false);
-CheckHasCycle("0-1 0-2 1-2", true);
-CheckHasCycle("0-1 0-2 0-3", false);
-CheckHasCycle("0-1 0-2 0-3 1-3", true);
-Console.WriteLine("OK");
-
-void CheckHasCycle(string p0, bool p1)
+internal class Program
 {
-    throw new NotImplementedException();
+    public static void Main(string[] args)
+    {
+#if !ONLINE_JUDGE
+        if (File.Exists("in.txt"))
+        {
+            Console.SetIn(new StreamReader("in.txt"));
+        }
+#endif
+        using var writer = new StreamWriter(Console.OpenStandardOutput());
+        Console.SetOut(writer);
+        var sc = new Scanner(Console.In);
+    }
 }
 
-bool HasCycle(List<Node> graph)
+internal class Scanner(TextReader reader)
 {
-    var visited = new HashSet<Node>();  // Серые вершины
-    var finished = new HashSet<Node>(); // Черные вершины
-    var stack = new Stack<Node>();
-    visited.Add(graph.First());
-    stack.Push(graph.First());
-    while (stack.Count != 0)
+    private readonly Stack<string> _tokens = new();
+
+    public string? Next()
     {
-        var node = stack.Pop();
-        foreach (var nextNode in node.IncidentNodes.Where(n => !finished.Contains(n)))
+        while (_tokens.Count == 0)
         {
-            if (!visited.Add(nextNode))
+            var line = reader.ReadLine();
+            if (line == null)
             {
-                return true;
+                return null;
             }
 
-            stack.Push(nextNode);
+            var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Reverse();
+            foreach (var p in parts)
+            {
+                _tokens.Push(p);
+            }
         }
 
-        finished.Add(node); // красим в черный, когда рассмотрели все пути из node
+        return _tokens.Pop();
     }
 
-    return false;
-}
-
-public class Node
-{
-    public int NodeNumber;
-    public List<Node> IncidentNodes = new List<Node>();
+    public int NextInt() => int.Parse(Next() ?? "0");
+    public long NextLong() => long.Parse(Next() ?? "0");
 }

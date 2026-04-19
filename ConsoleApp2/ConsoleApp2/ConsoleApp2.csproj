@@ -12,4 +12,10 @@
       <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.5.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="in.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
