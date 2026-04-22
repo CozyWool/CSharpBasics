@@ -5,6 +5,7 @@ namespace rocket_bot;
 public class Channel<T> where T : class
 {
     private readonly List<T> _items = [];
+    private readonly object _lockObj = new();
 
     /// <summary>
     /// Возвращает элемент по индексу или null, если такого элемента нет.
@@ -15,7 +16,7 @@ public class Channel<T> where T : class
     {
         get
         {
-            lock (_items)
+            lock (_lockObj)
             {
                 if (index >= 0 && index < _items.Count)
                 {
@@ -27,7 +28,7 @@ public class Channel<T> where T : class
         }
         set
         {
-            lock (_items)
+            lock (_lockObj)
             {
                 if (index >= 0 && index < _items.Count)
                 {
@@ -48,7 +49,7 @@ public class Channel<T> where T : class
     /// </summary>
     public T LastItem()
     {
-        lock (_items)
+        lock (_lockObj)
         {
             return _items.Count > 0 ? _items[^1] : null;
         }
@@ -59,7 +60,7 @@ public class Channel<T> where T : class
     /// </summary>
     public void AppendIfLastItemIsUnchanged(T item, T knownLastItem)
     {
-        lock (_items)
+        lock (_lockObj)
         {
             if (LastItem() != knownLastItem)
             {
@@ -77,7 +78,7 @@ public class Channel<T> where T : class
     {
         get
         {
-            lock (_items)
+            lock (_lockObj)
             {
                 return _items.Count;
             }
