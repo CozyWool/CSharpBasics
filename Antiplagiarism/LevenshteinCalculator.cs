@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using DocumentTokens = System.Collections.Generic.List<string>;
 
 namespace Antiplagiarism;
@@ -46,15 +45,8 @@ public class LevenshteinCalculator
     {
         for (var j = 1; j <= second.Count; ++j)
         {
-            if (firstToken == second[j - 1])
-            {
-                currentOpt[j] = previousOpt[j - 1];
-            }
-            else
-            {
-                currentOpt[j] = CalculateMin(TokenDistanceCalculator.GetTokenDistance(firstToken, second[j - 1]),
-                                             currentOpt, previousOpt, j);
-            }
+            currentOpt[j] = CalculateMin(TokenDistanceCalculator.GetTokenDistance(firstToken, second[j - 1]),
+                                         currentOpt, previousOpt, j);
         }
     }
 
@@ -65,6 +57,11 @@ public class LevenshteinCalculator
         var delete = 1 + previousOpt[j];
         var replace = previousOpt[j - 1] + distance;
 
-        return Math.Min(insert, Math.Min(delete, replace));
+        return FindMin(insert, delete, replace);
+    }
+
+    private static T FindMin<T>(params T[] values) where T : IComparable<T>
+    {
+        return values.Min();
     }
 }
