@@ -14,7 +14,8 @@ public class LevenshteinCalculator
         {
             for (var j = i + 1; j < documents.Count; j++)
             {
-                result.Add(new ComparisonResult(documents[i], documents[j],
+                result.Add(new ComparisonResult(documents[i],
+                                                documents[j],
                                                 LevenshteinDistance(documents[i], documents[j])));
             }
         }
@@ -27,12 +28,17 @@ public class LevenshteinCalculator
         var previousOpt = Enumerable.Range(0, second.Count + 1).Select(x => (double) x).ToArray();
         var currentOpt = new double[second.Count + 1];
 
-
         for (var i = 1; i <= first.Count; ++i)
         {
             currentOpt[0] = i;
 
-            FillCurrentOpt(first[i - 1], second, currentOpt, previousOpt);
+            for (var j = 1; j <= second.Count; ++j)
+            {
+                currentOpt[j] =
+                    FindMin(1 + currentOpt[j - 1],
+                            1 + previousOpt[j],
+                            previousOpt[j - 1] + TokenDistanceCalculator.GetTokenDistance(first[i - 1], second[j - 1]));
+            }
 
             (previousOpt, currentOpt) = (currentOpt, previousOpt);
         }
@@ -40,28 +46,5 @@ public class LevenshteinCalculator
         return previousOpt[second.Count];
     }
 
-    private static void FillCurrentOpt(string firstToken, DocumentTokens second, double[] currentOpt,
-                                       double[] previousOpt)
-    {
-        for (var j = 1; j <= second.Count; ++j)
-        {
-            currentOpt[j] = CalculateMin(TokenDistanceCalculator.GetTokenDistance(firstToken, second[j - 1]),
-                                         currentOpt, previousOpt, j);
-        }
-    }
-
-    private static double CalculateMin(double distance, double[] currentOpt,
-                                       double[] previousOpt, int j)
-    {
-        var insert = 1 + currentOpt[j - 1];
-        var delete = 1 + previousOpt[j];
-        var replace = previousOpt[j - 1] + distance;
-
-        return FindMin(insert, delete, replace);
-    }
-
-    private static T FindMin<T>(params T[] values) where T : IComparable<T>
-    {
-        return values.Min();
-    }
+    private static T FindMin<T>(params T[] values) where T : IComparable<T> => values.Min();
 }
