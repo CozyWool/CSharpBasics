@@ -6,21 +6,33 @@ namespace BinaryTrees;
 
 public class BinaryTree<T> : IEnumerable<T> where T : IComparable
 {
-    private class Node(T value)
+    private bool _hasValue;
+    public T? Value { get; private set; }
+    public BinaryTree<T>? Left { get; private set; }
+    public BinaryTree<T>? Right { get; private set; }
+    public int Size { get; private set; }
+
+    public BinaryTree()
     {
-        public readonly T Value = value;
-        public Node? Left;
-        public Node? Right;
-        public int Size = 1;
     }
 
-    private Node? _root;
+    private BinaryTree(T item)
+    {
+        AddFirstValue(item);
+    }
+
+    private void AddFirstValue(T item)
+    {
+        _hasValue = true;
+        Value = item;
+        Size = 1;
+    }
 
     public void Add(T item)
     {
-        if (_root is null)
+        if (!_hasValue)
         {
-            _root = new Node(item);
+            AddFirstValue(item);
             return;
         }
 
@@ -29,95 +41,91 @@ public class BinaryTree<T> : IEnumerable<T> where T : IComparable
 
     private void Insert(T item)
     {
-        var current = _root;
-        while (true)
+        var compareToResult = item.CompareTo(Value);
+        switch (compareToResult)
         {
-            current.Size++;
-            var compareToResult = item.CompareTo(current.Value);
-            switch (compareToResult)
-            {
-                case < 0 when current.Left is null:
-                    current.Left = new Node(item);
-                    return;
-                case < 0:
-                    current = current.Left;
-                    break;
-                case >= 0 when current.Right is null:
-                    current.Right = new Node(item);
-                    return;
-                case >= 0:
-                    current = current.Right;
-                    break;
-            }
+            case < 0 when Left is null:
+                Left = new BinaryTree<T>(item);
+                break;
+            case < 0:
+                Left.Add(item);
+                break;
+            case >= 0 when Right is null:
+                Right = new BinaryTree<T>(item);
+                break;
+            case >= 0:
+                Right.Add(item);
+                break;
         }
+
+        Size = 1 + (Left?.Size ?? 0) + (Right?.Size ?? 0);
     }
 
     public bool Contains(T item)
     {
-        var current = _root;
-        while (current is not null)
+        if (!_hasValue)
         {
-            var compareToResult = item.CompareTo(current.Value);
-            if (compareToResult == 0)
-            {
-                return true;
-            }
-
-            current = compareToResult < 0 ? current.Left : current.Right;
+            return false;
         }
 
-        return false;
+        var compareToResult = item.CompareTo(Value);
+        if (compareToResult == 0)
+        {
+            return true;
+        }
+
+        return compareToResult < 0
+                   ? Left?.Contains(item) ?? false
+                   : Right?.Contains(item) ?? false;
     }
 
     public T this[int index]
     {
         get
         {
-            if (index < 0 || index >= _root.Size)
+            if (!_hasValue || index < 0 || index >= Size)
             {
                 throw new IndexOutOfRangeException($"Index was {index}");
             }
 
-            return GetByIndex(_root, index);
+            var leftSize = Left?.Size ?? 0;
+            if (index < leftSize)
+            {
+                return Left[index];
+            }
+
+            if (index == leftSize)
+            {
+                return Value;
+            }
+
+            return Right[index - leftSize - 1];
         }
     }
 
-    private T GetByIndex(Node node, int index)
+    public IEnumerator<T> GetEnumerator()
     {
-        var leftSize = node.Left?.Size ?? 0;
-
-        if (index < leftSize)
-        {
-            return GetByIndex(node.Left, index);
-        }
-
-        if (index == leftSize)
-        {
-            return node.Value;
-        }
-
-        return GetByIndex(node.Right, index - leftSize - 1);
-    }
-
-    public IEnumerator<T> GetEnumerator() => EnumerateTree(_root).GetEnumerator();
-
-    private IEnumerable<T> EnumerateTree(Node? node)
-    {
-        if (node is null)
+        if (!_hasValue)
         {
             yield break;
         }
 
-        foreach (var leftValue in EnumerateTree(node.Left))
+        if (Left is not null)
         {
-            yield return leftValue;
+            foreach (var leftValue in Left)
+            {
+                yield return leftValue;
+            }
         }
 
-        yield return node.Value;
+        yield return Value;
 
-        foreach (var rightValue in EnumerateTree(node.Right))
+        if (Right is not null)
         {
-            yield return rightValue;
+            foreach (var rightValue in Right)
+            {
+                yield return rightValue;
+            }
         }
     }
 
