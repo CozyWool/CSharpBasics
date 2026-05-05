@@ -7,10 +7,10 @@ public static class DiskTreeTask
 {
     private class DiskTreeNode
     {
-        public SortedList<string, DiskTreeNode> Children { get; } = new(StringComparer.Ordinal);
+        public SortedDictionary<string, DiskTreeNode> Children { get; } = new(StringComparer.Ordinal);
     }
 
-    public static List<string> Solve(List<string> input)
+    public static IEnumerable<string> Solve(List<string> input)
     {
         var root = new DiskTreeNode();
 
@@ -26,18 +26,19 @@ public static class DiskTreeTask
             }
         }
 
-        var result = new List<string>();
-        result.FillResult(root);
-        return result;
+        return GetResult(root, -1);
     }
 
-    private static void FillResult(this List<string> result, DiskTreeNode node, int depth = -1)
+    private static IEnumerable<string> GetResult(DiskTreeNode node, int depth)
     {
         foreach (var (directory, nextNode) in node.Children)
         {
-            var indent = new string(' ', depth + 1);
-            result.Add($"{indent}{directory}");
-            result.FillResult(nextNode, depth + 1);
+            yield return directory.PadLeft(directory.Length + depth + 1, ' ');
+
+            foreach (var childResult in GetResult(nextNode, depth + 1))
+            {
+                yield return childResult;
+            }
         }
     }
 }
