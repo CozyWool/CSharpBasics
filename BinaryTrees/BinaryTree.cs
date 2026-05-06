@@ -6,8 +6,7 @@ namespace BinaryTrees;
 
 public class BinaryTree<T> : IEnumerable<T> where T : IComparable
 {
-    private bool _hasValue;
-    public T? Value { get; private set; }
+    public T Value { get; private set; }
     public BinaryTree<T>? Left { get; private set; }
     public BinaryTree<T>? Right { get; private set; }
     public int Size { get; private set; }
@@ -23,14 +22,13 @@ public class BinaryTree<T> : IEnumerable<T> where T : IComparable
 
     private void AddFirstValue(T item)
     {
-        _hasValue = true;
         Value = item;
         Size = 1;
     }
 
     public void Add(T item)
     {
-        if (!_hasValue)
+        if (Size == 0)
         {
             AddFirstValue(item);
             return;
@@ -41,49 +39,56 @@ public class BinaryTree<T> : IEnumerable<T> where T : IComparable
 
     private void Insert(T item)
     {
-        var compareToResult = item.CompareTo(Value);
-        switch (compareToResult)
+        var current = this;
+        while (true)
         {
-            case < 0 when Left is null:
-                Left = new BinaryTree<T>(item);
-                break;
-            case < 0:
-                Left.Add(item);
-                break;
-            case >= 0 when Right is null:
-                Right = new BinaryTree<T>(item);
-                break;
-            case >= 0:
-                Right.Add(item);
-                break;
+            current.Size++;
+            var compareToResult = item.CompareTo(current.Value);
+            switch (compareToResult)
+            {
+                case < 0 when current.Left is null:
+                    current.Left = new BinaryTree<T>(item);
+                    return;
+                case < 0:
+                    current = current.Left;
+                    break;
+                case >= 0 when current.Right is null:
+                    current.Right = new BinaryTree<T>(item);
+                    return;
+                case >= 0:
+                    current = current.Right;
+                    break;
+            }
         }
-
-        Size = 1 + (Left?.Size ?? 0) + (Right?.Size ?? 0);
     }
 
     public bool Contains(T item)
     {
-        if (!_hasValue)
+        if (Size == 0)
         {
             return false;
         }
-
-        var compareToResult = item.CompareTo(Value);
-        if (compareToResult == 0)
+        
+        var current = this;
+        while (current is not null)
         {
-            return true;
+            var compareToResult = item.CompareTo(current.Value);
+            if (compareToResult == 0)
+            {
+                return true;
+            }
+
+            current = compareToResult < 0 ? current.Left : current.Right;
         }
 
-        return compareToResult < 0
-                   ? Left?.Contains(item) ?? false
-                   : Right?.Contains(item) ?? false;
+        return false;
     }
 
     public T this[int index]
     {
         get
         {
-            if (!_hasValue || index < 0 || index >= Size)
+            if (index < 0 || index >= Size)
             {
                 throw new IndexOutOfRangeException($"Index was {index}");
             }
@@ -105,7 +110,7 @@ public class BinaryTree<T> : IEnumerable<T> where T : IComparable
 
     public IEnumerator<T> GetEnumerator()
     {
-        if (!_hasValue)
+        if (Size == 0)
         {
             yield break;
         }
