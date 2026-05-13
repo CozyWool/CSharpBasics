@@ -7,20 +7,21 @@ namespace Documentation;
 public class Specifier<T> : ISpecifier
 {
     private readonly Type _type = typeof(T);
+    private const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance;
 
     public string GetApiDescription() => _type.GetCustomAttribute<ApiDescriptionAttribute>()?.Description;
 
-    public string[] GetApiMethodNames() => _type.GetMethods()
+    public string[] GetApiMethodNames() => _type.GetMethods(Flags)
                                                 .Where(x => x.GetCustomAttribute<ApiMethodAttribute>() is not null)
                                                 .Select(x => x.Name)
                                                 .ToArray();
 
     public string GetApiMethodDescription(string methodName) =>
-        _type.GetMethod(methodName)?.GetCustomAttribute<ApiDescriptionAttribute>()?.Description;
+        _type.GetMethod(methodName, Flags)?.GetCustomAttribute<ApiDescriptionAttribute>()?.Description;
 
 
     public string[] GetApiMethodParamNames(string methodName) =>
-        _type.GetMethod(methodName)?.GetParameters().Select(x => x.Name).ToArray();
+        _type.GetMethod(methodName, Flags)?.GetParameters().Select(x => x.Name).ToArray();
 
     public string GetApiMethodParamDescription(string methodName, string paramName) =>
         GetParameterInfo(methodName, paramName)
@@ -28,13 +29,13 @@ public class Specifier<T> : ISpecifier
           ?.Description;
 
     private ParameterInfo GetParameterInfo(string methodName, string paramName) =>
-        _type.GetMethod(methodName)
+        _type.GetMethod(methodName, Flags)
             ?.GetParameters()
              .FirstOrDefault(x => x.Name == paramName);
 
     public ApiParamDescription GetApiMethodParamFullDescription(string methodName, string paramName)
     {
-        var method = _type.GetMethod(methodName);
+        var method = _type.GetMethod(methodName, Flags);
         if (method is null)
         {
             return CreateApiParamDescription(methodName, paramName, null);
@@ -56,7 +57,7 @@ public class Specifier<T> : ISpecifier
 
     public ApiMethodDescription GetApiMethodFullDescription(string methodName)
     {
-        var method = _type.GetMethod(methodName);
+        var method = _type.GetMethod(methodName, Flags);
         if (method?.GetCustomAttribute<ApiMethodAttribute>() is null)
         {
             return null;
